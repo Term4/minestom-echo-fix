@@ -14,166 +14,58 @@ import java.util.Map;
 
 /**
  * A Player implementation that suppresses client-predicted metadata echoes.
+ * <p>
+ * Use via {@link EchoFix#install()} — do not instantiate directly unless
+ * you are providing your own player provider.
  *
- * <h2>The Problem</h2>
- * When a player performs an action (sneak, sprint, use item), the Minecraft client
- * applies the state change locally for immediate visual feedback. The client then
- * notifies the server, which updates its internal state and broadcasts the change
- * to all viewers including the player who initiated it. When a player receives
- * an update about themselves (the "echo"), the client reapplies the state, causing a visible
- * stutter for one tick.
- *
- * This affects sneaking, sprinting, item use, and pose transitions.
- *
- * <h2>The Fix</h2>
- * {@code EchoFixPlayer} intercepts outgoing metadata packets in
- * {@link #sendPacketToViewersAndSelf(SendablePacket)} and splits it into two copies.
- * The copy sent to external viewers is always unchanged, and the copy sent to self
- * is stripped of client-predicted (or otherwise preconfigured) entries.
- * The filter is only active during processing of a client input packet
- * (detected via the {@code echoingSelfInput} flag set in the method overrides).
- *
- * <h2>Server-Driven Changes</h2>
- * When a plugin or the server itself needs to override a client-authoritative state
- * (e.g., force a player to stop sneaking), use {@link #forceMetadata(Runnable)}
- * to bypass the filter:
- * <pre>{@code
- * echoFixPlayer.forceMetadata(() -> player.setSneaking(false));
- * }</pre>
- *
- * <h2>Elytra Handling</h2>
- * Elytra start ({@code setFlyingWithElytra(true)}) is predicted and filtered by default.
- * Elytra stop ({@code setFlyingWithElytra(false)}) is a server decision (player landed)
- * and always passes through to the client unfiltered (otherwise players get stuck flying
- * and are unable to leave the pose, even upon removing their elytra).
- *
- * <h2>Usage</h2>
- * Use this class instead of {@link Player} in your connection handler:
- * <pre>{@code
- * ConnectionManager connectionManager = MinecraftServer.getConnectionManager();
- * connectionManager.setPlayerProvider(EchoFixPlayer::new);
- * }</pre>
+ * @see EchoFix#install()
+ * @see SelfMetaFilter
  */
 public class EchoFixPlayer extends Player {
 
     private @Nullable SelfMetaFilter selfMetaFilter = SelfMetaFilter.defaultPlayerFilter();
-
-    private boolean echoingSelfInput = false;
-    private boolean serverForced = false;
+    private boolean processingClientInput = false;
 
     /**
-     * Creates an EchoFixPlayer for the given connection and game profile.
-     *
-     * @param playerConnection the player's network connection
-     * @param gameProfile the player's game profile
+     * Creates a new EchoFixPlayer.
+     * @param connection the player connection
+     * @param profile the player's game profile
      */
-    public EchoFixPlayer(@NotNull PlayerConnection playerConnection, @NotNull GameProfile gameProfile) {
-        super(playerConnection, gameProfile);
+    public EchoFixPlayer(@NotNull PlayerConnection connection, @NotNull GameProfile profile) {
+        super(connection, profile);
     }
 
-    // Public API
     /**
-     * Get the current self-meta filter.
-     *
-     * @return the filter, or null if filter is disabled
+     * Sets whether the packet currently being processed is due to client input.
+     * @param value true when processing a client input packet
      */
-    public @Nullable SelfMetaFilter getSelfMetadataFilter() {
+    public void setProcessingClientInput(boolean value) {
+        this.processingClientInput = value;
+    }
+
+    /**
+     * Gets the current self-metadata filter.
+     * @return the current filter
+     */
+    public @Nullable SelfMetaFilter getSelfMetaFilter() {
         return selfMetaFilter;
     }
 
     /**
-     * Set a custom self-meta filter, or null to disable filter entirely.
-     *
-     * @param filter the filter to use, or null to disable
+     * Sets the self-metadata filter, or use null to disable filtering.
+     * @param filter the filter to use
      */
-    public void setSelfMetadataFilter(@Nullable SelfMetaFilter filter) {
+    public void setSelfMetaFilter(@Nullable SelfMetaFilter filter) {
         this.selfMetaFilter = filter;
     }
 
-    /**
-     * Execute a metadata change that bypasses the filter.
-     * <p>
-     * Use this when the server needs to override client-predicted state.
-     * Without this wrapper, server calls to {@link #setSneaking},
-     * {@link #setSprinting}, etc. will be filtered.
-     *
-     * <pre>{@code
-     * // Override the players local sneaking state
-     * echoFixPlayer.forceMetadata(() -> player.setSneaking(false));
-     * }</pre>
-     *
-     * @param action the metadata change bypassing the filter
-     */
-    public void forceMetadata(@NotNull Runnable action) {
-        serverForced = true;
-        try {
-            action.run();
-        } finally {
-            serverForced = false;
-        }
-    }
-
-
-    @Override
-    public void setSneaking(boolean sneaking) {
-        if (!serverForced) {
-            echoingSelfInput = true;
-            super.setSneaking(sneaking);
-            echoingSelfInput = false;
-        } else {
-            super.setSneaking(sneaking);
-        }
-    }
-
-    @Override
-    public void setSprinting(boolean sprinting) {
-        if (!serverForced) {
-            echoingSelfInput = true;
-            super.setSprinting(sprinting);
-            echoingSelfInput = false;
-        } else {
-            super.setSprinting(sprinting);
-        }
-    }
-
-    @Override
-    public void setFlyingWithElytra(boolean flying) {
-        if (flying && !serverForced) {
-            // Start flying with elytra IS predicted by the client
-            echoingSelfInput = true;
-            super.setFlyingWithElytra(true);
-            echoingSelfInput = false;
-        } else if (!flying && !serverForced && selfMetaFilter != null
-                    && selfMetaFilter.filterElytraStop()) {
-            // Server DOES NOT send stop flying meta (players get stuck flying until relog)
-            echoingSelfInput = true;
-            super.setFlyingWithElytra(false);
-            echoingSelfInput = false;
-        } else {
-            super.setFlyingWithElytra(flying);
-        }
-    }
-
-    @Override
-    public void refreshActiveHand(boolean isHandActive, boolean offHand, boolean riptideSpinAttack) {
-        if (!serverForced) {
-            echoingSelfInput = true;
-            super.refreshActiveHand(isHandActive, offHand, riptideSpinAttack);
-            echoingSelfInput = false;
-        } else {
-            super.refreshActiveHand(isHandActive, offHand, riptideSpinAttack);
-        }
-    }
-
-    // Outgoing packet filter
     @Override
     public void sendPacketToViewersAndSelf(@NotNull SendablePacket packet) {
-        if (echoingSelfInput && selfMetaFilter != null) {
-            if (packet instanceof EntityMetaDataPacket(
-                    int entityId, Map<Integer, Metadata.Entry<?>> entries
-            ) && entityId == getEntityId()) {
-                Map<Integer, Metadata.Entry<?>> filtered = selfMetaFilter.filter(entries);
+        if (processingClientInput && selfMetaFilter != null) {
 
+            // Metadata filtering (crouching, use item, start elytra fly)
+            if (packet instanceof EntityMetaDataPacket(int entityId, Map<Integer, Metadata.Entry<?>> entries) && entityId == getEntityId()) {
+                Map<Integer, Metadata.Entry<?>> filtered = selfMetaFilter.filter(entries);
                 if (filtered != null) {
                     if (!filtered.isEmpty()) {
                         sendPacket(new EntityMetaDataPacket(entityId, filtered));
@@ -183,6 +75,7 @@ public class EchoFixPlayer extends Player {
                 }
             }
 
+            // Attribute filter (e.g. sprint)
             if (packet instanceof EntityAttributesPacket attr
                     && attr.entityId() == getEntityId()
                     && selfMetaFilter.suppressAttributes()) {

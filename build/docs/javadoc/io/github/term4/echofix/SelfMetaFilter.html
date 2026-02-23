@@ -69,8 +69,6 @@ loadScripts(document, 'script');</script>
 <li><a href="#suppressIndex(net.minestom.server.entity.MetadataDef.Entry)" tabindex="0">suppressIndex(MetadataDef.Entry)</a></li>
 <li><a href="#suppressBit(net.minestom.server.entity.MetadataDef.Entry.BitMask)" tabindex="0">suppressBit(MetadataDef.Entry.BitMask)</a></li>
 <li><a href="#suppressAttributes(boolean)" tabindex="0">suppressAttributes(boolean)</a></li>
-<li><a href="#filterElytraStop(boolean)" tabindex="0">filterElytraStop(boolean)</a></li>
-<li><a href="#filterElytraStop()" tabindex="0">filterElytraStop()</a></li>
 <li><a href="#suppressAttributes()" tabindex="0">suppressAttributes()</a></li>
 <li><a href="#filter(java.util.Map)" tabindex="0">filter(Map)</a></li>
 <li><a href="#defaultPlayerFilter()" tabindex="0">defaultPlayerFilter()</a></li>
@@ -104,10 +102,10 @@ metadata packets. Viewers always receive the full, unmodified packet.
 
 <h2 id="usage-heading">Usage</h2>
 <pre><code>// Use the default filter
-SelfMetadataFilter filter = SelfMetadataFilter.defaultPlayerFilter();
+SelfMetaFilter filter = SelfMetaFilter.defaultPlayerFilter();
 
 // Or build a custom filter (useful for cross version servers)
-SelfMetadataFilter filter = new SelfMetadataFilter()
+SelfMetaFilter filter = new SelfMetaFilter()
         .suppressBit((MetadataDef.Entry.BitMask) MetadataDef.IS_CROUCHING)
         .suppressIndex(MetadataDef.POSE);
 </code></pre></div>
@@ -150,16 +148,6 @@ SelfMetadataFilter filter = new SelfMetadataFilter()
 <div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#filter(java.util.Map)" class="member-name-link">filter</a><wbr>(<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/util/Map.html" title="class or interface in java.util" class="external-link">Map</a>&lt;<a href="https://docs.oracle.com/en/java/javase/25/docs/api/java.base/java/lang/Integer.html" title="class or interface in java.lang" class="external-link">Integer</a>, net.minestom.server.entity.Metadata.Entry&lt;?&gt;&gt;&nbsp;entries)</code></div>
 <div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
 <div class="block">Filter a metadata entry map, stripping preconfigured data.</div>
-</div>
-<div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
-<div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#filterElytraStop()" class="member-name-link">filterElytraStop</a>()</code></div>
-<div class="col-last even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">Returns whether stop flying with elytra is being filtered.</div>
-</div>
-<div class="col-first odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="SelfMetaFilter.html" title="class in io.github.term4.echofix">SelfMetaFilter</a></code></div>
-<div class="col-second odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#filterElytraStop(boolean)" class="member-name-link">filterElytraStop</a><wbr>(boolean&nbsp;filter)</code></div>
-<div class="col-last odd-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4">
-<div class="block">When true prevents the server from signalling players to stop flying.</div>
 </div>
 <div class="col-first even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code>boolean</code></div>
 <div class="col-second even-row-color method-summary-table method-summary-table-tab2 method-summary-table-tab4"><code><a href="#suppressAttributes()" class="member-name-link">suppressAttributes</a>()</code></div>
@@ -279,29 +267,6 @@ so this update causes the same one tick stutter seen with certain metadata.</div
 </section>
 </li>
 <li>
-<section class="detail" id="filterElytraStop(boolean)">
-<h3>filterElytraStop</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type"><a href="SelfMetaFilter.html" title="class in io.github.term4.echofix">SelfMetaFilter</a></span>&nbsp;<span class="element-name">filterElytraStop</span><wbr><span class="parameters">(boolean&nbsp;filter)</span></div>
-<div class="block">When true prevents the server from signalling players to stop flying.</div>
-<dl class="notes">
-<dt>Parameters:</dt>
-<dd><code>filter</code> - When true players will get stuck flying until they relog.</dd>
-<dt>Returns:</dt>
-</dl>
-</div>
-</section>
-</li>
-<li>
-<section class="detail" id="filterElytraStop()">
-<h3>filterElytraStop</h3>
-<div class="horizontal-scroll">
-<div class="member-signature"><span class="modifiers">public</span>&nbsp;<span class="return-type">boolean</span>&nbsp;<span class="element-name">filterElytraStop</span>()</div>
-<div class="block">Returns whether stop flying with elytra is being filtered.</div>
-</div>
-</section>
-</li>
-<li>
 <section class="detail" id="suppressAttributes()">
 <h3>suppressAttributes</h3>
 <div class="horizontal-scroll">
@@ -350,7 +315,10 @@ Suppresses:
   <li>Entity attribute echoes</li>
 </ul>
 <p>
-Non-predicted bits always pass through (e.g. on fire, glowing)</div>
+Non-predicted bits always pass through (e.g. on fire, glowing)
+
+Swimming and crawling stutter is also resolved by pose suppression
+(index 6) even though the swimming bit (0x10) is not explicitly filtered.</div>
 <dl class="notes">
 <dt>Returns:</dt>
 <dd>a new default filter</dd>

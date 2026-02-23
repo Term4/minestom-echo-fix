@@ -6,8 +6,8 @@ import net.minestom.server.command.CommandManager;
 import net.minestom.server.command.builder.Command;
 import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.coordinate.Pos;
+import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
-import net.minestom.server.entity.metadata.EntityMeta;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
 import net.minestom.server.instance.InstanceContainer;
@@ -49,14 +49,14 @@ public class ExampleServer {
         MinecraftServer server = MinecraftServer.init(new Auth.Bungee());
 
         // Enable echo fix
-        MinecraftServer.getConnectionManager().setPlayerProvider(EchoFixPlayer::new);
+        EchoFix.install();
 
         // Create the instance (world)
         InstanceManager instanceManager = MinecraftServer.getInstanceManager();
         InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
 
         // Generate the world & add lighting
-        instanceContainer.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
+        instanceContainer.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.WATER));
         instanceContainer.setChunkSupplier(LightingChunk::new);
 
         // Register self-meta debug commands
@@ -71,71 +71,37 @@ public class ExampleServer {
 
             for (String flag : flags) {
                 switch (flag.trim().toLowerCase()) {
-                    case "fire" -> {
-                        EntityMeta meta = player.getEntityMeta();
-                        boolean current = meta.isOnFire();
-                        meta.setOnFire(!current);
-                        sender.sendMessage("fire → " + !current);
-                    }
                     case "sneak" -> {
-                        EchoFixPlayer pp = (EchoFixPlayer) player;
                         boolean current = player.isSneaking();
-                        pp.forceMetadata(() -> player.setSneaking(!current));
+                        player.setSneaking(!current);
                         sender.sendMessage("sneak → " + !current);
                     }
                     case "sprint" -> {
-                        EchoFixPlayer pp = (EchoFixPlayer) player;
                         boolean current = player.isSprinting();
-                        pp.forceMetadata(() -> player.setSprinting(!current));
+                        player.setSprinting(!current);
                         sender.sendMessage("sprint → " + !current);
                     }
-                    case "invis" -> {
-                        boolean current = player.isInvisible();
-                        player.setInvisible(!current);
-                        sender.sendMessage("invisible → " + !current);
-                    }
-                    case "glow" -> {
-                        boolean current = player.isGlowing();
-                        player.setGlowing(!current);
-                        sender.sendMessage("glowing → " + !current);
-                    }
                     case "elytra" -> {
-                        EchoFixPlayer pp = (EchoFixPlayer) player;
                         boolean current = player.isFlyingWithElytra();
-                        pp.forceMetadata(() -> player.setFlyingWithElytra(!current));
+                        player.setFlyingWithElytra(!current);
                         sender.sendMessage("elytra → " + !current);
                     }
                     case "hand" -> {
-                        EchoFixPlayer pp = (EchoFixPlayer) player;
-                        pp.forceMetadata(() -> player.refreshActiveHand(true, false, false));
+                        player.refreshActiveHand(true, false, false);
                         sender.sendMessage("hand → active");
                         MinecraftServer.getSchedulerManager().scheduleTask(() -> {
-                            pp.forceMetadata(() -> player.refreshActiveHand(false, false, false));
+                            player.refreshActiveHand(false, false, false);
                             sender.sendMessage("hand → inactive");
                             return TaskSchedule.stop();
                         }, TaskSchedule.tick(40));
                     }
-                    case "pose_sneak" -> {
-                        player.setPose(net.minestom.server.entity.EntityPose.SNEAKING);
-                        sender.sendMessage("pose → SNEAKING");
-                    }
-                    case "pose_stand" -> {
-                        player.setPose(net.minestom.server.entity.EntityPose.STANDING);
-                        sender.sendMessage("pose → STANDING");
-                    }
-                    case "pose_swim" -> {
-                        player.setPose(net.minestom.server.entity.EntityPose.SWIMMING);
-                        sender.sendMessage("pose → SWIMMING");
-                    }
                     default -> sender.sendMessage("unknown: " + flag.trim()
-                            + " (options: fire,sneak,sprint,invis,glow,elytra,hand,pose_sneak,pose_stand,pose_swim)");
+                            + " (options: sneak, sprint, elytra, hand)");
                 }
             }
         }, ArgumentType.String("flags"));
 
         cmdManager.register(selfmeta);
-
-
 
         // Add an event handler to handle player spawning
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
@@ -144,9 +110,10 @@ public class ExampleServer {
             event.setSpawningInstance(instanceContainer);
             player.setRespawnPoint(new Pos(0, 42, 0));
 
+            player.setGameMode(GameMode.CREATIVE);
+
             player.getInventory().addItemStack(ItemStack.of(Material.SHIELD));
             player.setChestplate(ItemStack.of(Material.ELYTRA));
-
         });
 
         // Start the server

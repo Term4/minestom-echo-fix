@@ -49,7 +49,7 @@ loadScripts(document, 'script');</script>
 <div class="header">
 <h1>Index</h1>
 </div>
-<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
+<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:W">W</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a>
 <h2 class="title" id="I:D">D</h2>
 <dl class="index">
 <dt><a href="io/github/term4/echofix/SelfMetaFilter.html#defaultPlayerFilter()" class="member-name-link">defaultPlayerFilter()</a> - Static method in class io.github.term4.echofix.<a href="io/github/term4/echofix/SelfMetaFilter.html" title="class in io.github.term4.echofix">SelfMetaFilter</a></dt>
@@ -59,19 +59,18 @@ loadScripts(document, 'script');</script>
 </dl>
 <h2 class="title" id="I:E">E</h2>
 <dl class="index">
+<dt><a href="io/github/term4/echofix/EchoFix.html" class="type-name-link" title="class in io.github.term4.echofix">EchoFix</a> - Class in <a href="io/github/term4/echofix/package-summary.html">io.github.term4.echofix</a></dt>
+<dd>
+<div class="block">Installs the echo fix by wrapping Minestom's packet listeners
+and setting the player provider to <a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix"><code>EchoFixPlayer</code></a>.</div>
+</dd>
 <dt><a href="io/github/term4/echofix/EchoFixPlayer.html" class="type-name-link" title="class in io.github.term4.echofix">EchoFixPlayer</a> - Class in <a href="io/github/term4/echofix/package-summary.html">io.github.term4.echofix</a></dt>
 <dd>
 <div class="block">A Player implementation that suppresses client-predicted metadata echoes.</div>
 </dd>
 <dt><a href="io/github/term4/echofix/EchoFixPlayer.html#%3Cinit%3E(net.minestom.server.network.player.PlayerConnection,net.minestom.server.network.player.GameProfile)" class="member-name-link">EchoFixPlayer(PlayerConnection, GameProfile)</a> - Constructor for class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
 <dd>
-<div class="block">Creates an EchoFixPlayer for the given connection and game profile.</div>
-</dd>
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#elytra-handling-heading" class="search-tag-link">Elytra Handling</a> - Section in class io.github.term4.echofix.EchoFixPlayer</dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/github/term4/echofix/ExampleServer.html" class="type-name-link" title="class in io.github.term4.echofix">ExampleServer</a> - Class in <a href="io/github/term4/echofix/package-summary.html">io.github.term4.echofix</a></dt>
-<dd>
-<div class="block">Example Minestom server demonstrating the echo fix library.</div>
+<div class="block">Creates a new EchoFixPlayer.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:F">F</h2>
@@ -80,34 +79,25 @@ loadScripts(document, 'script');</script>
 <dd>
 <div class="block">Filter a metadata entry map, stripping preconfigured data.</div>
 </dd>
-<dt><a href="io/github/term4/echofix/SelfMetaFilter.html#filterElytraStop()" class="member-name-link">filterElytraStop()</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/SelfMetaFilter.html" title="class in io.github.term4.echofix">SelfMetaFilter</a></dt>
-<dd>
-<div class="block">Returns whether stop flying with elytra is being filtered.</div>
-</dd>
-<dt><a href="io/github/term4/echofix/SelfMetaFilter.html#filterElytraStop(boolean)" class="member-name-link">filterElytraStop(boolean)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/SelfMetaFilter.html" title="class in io.github.term4.echofix">SelfMetaFilter</a></dt>
-<dd>
-<div class="block">When true prevents the server from signalling players to stop flying.</div>
-</dd>
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#forceMetadata(java.lang.Runnable)" class="member-name-link">forceMetadata(Runnable)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
-<dd>
-<div class="block">Execute a metadata change that bypasses the filter.</div>
-</dd>
 </dl>
 <h2 class="title" id="I:G">G</h2>
 <dl class="index">
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#getSelfMetadataFilter()" class="member-name-link">getSelfMetadataFilter()</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
+<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#getSelfMetaFilter()" class="member-name-link">getSelfMetaFilter()</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
 <dd>
-<div class="block">Get the current self-meta filter.</div>
+<div class="block">Gets the current self-metadata filter.</div>
 </dd>
 </dl>
 <h2 class="title" id="I:I">I</h2>
 <dl class="index">
+<dt><a href="io/github/term4/echofix/EchoFix.html#install()" class="member-name-link">install()</a> - Static method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFix.html" title="class in io.github.term4.echofix">EchoFix</a></dt>
+<dd>
+<div class="block">Install the echo fix.</div>
+</dd>
+<dt><a href="io/github/term4/echofix/EchoFix.html#install(net.minestom.server.network.PlayerProvider)" class="member-name-link">install(PlayerProvider)</a> - Static method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFix.html" title="class in io.github.term4.echofix">EchoFix</a></dt>
+<dd>
+<div class="block">Install with a custom player provider (for subclasses of <a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix"><code>EchoFixPlayer</code></a>).</div>
+</dd>
 <dt><a href="io/github/term4/echofix/package-summary.html">io.github.term4.echofix</a> - package io.github.term4.echofix</dt>
-<dd>&nbsp;</dd>
-</dl>
-<h2 class="title" id="I:R">R</h2>
-<dl class="index">
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#refreshActiveHand(boolean,boolean,boolean)" class="member-name-link">refreshActiveHand(boolean, boolean, boolean)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
 <dd>&nbsp;</dd>
 </dl>
 <h2 class="title" id="I:S">S</h2>
@@ -122,18 +112,14 @@ loadScripts(document, 'script');</script>
 </dd>
 <dt><a href="io/github/term4/echofix/EchoFixPlayer.html#sendPacketToViewersAndSelf(net.minestom.server.network.packet.server.SendablePacket)" class="member-name-link">sendPacketToViewersAndSelf(SendablePacket)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
 <dd>&nbsp;</dd>
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#server-driven-changes-heading" class="search-tag-link">Server-Driven Changes</a> - Section in class io.github.term4.echofix.EchoFixPlayer</dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#setFlyingWithElytra(boolean)" class="member-name-link">setFlyingWithElytra(boolean)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#setSelfMetadataFilter(io.github.term4.echofix.SelfMetaFilter)" class="member-name-link">setSelfMetadataFilter(SelfMetaFilter)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
+<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#setProcessingClientInput(boolean)" class="member-name-link">setProcessingClientInput(boolean)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
 <dd>
-<div class="block">Set a custom self-meta filter, or null to disable filter entirely.</div>
+<div class="block">Sets whether the packet currently being processed is due to client input.</div>
 </dd>
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#setSneaking(boolean)" class="member-name-link">setSneaking(boolean)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#setSprinting(boolean)" class="member-name-link">setSprinting(boolean)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
-<dd>&nbsp;</dd>
+<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#setSelfMetaFilter(io.github.term4.echofix.SelfMetaFilter)" class="member-name-link">setSelfMetaFilter(SelfMetaFilter)</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFixPlayer.html" title="class in io.github.term4.echofix">EchoFixPlayer</a></dt>
+<dd>
+<div class="block">Sets the self-metadata filter, or use null to disable filtering.</div>
+</dd>
 <dt><a href="io/github/term4/echofix/SelfMetaFilter.html#suppressAttributes()" class="member-name-link">suppressAttributes()</a> - Method in class io.github.term4.echofix.<a href="io/github/term4/echofix/SelfMetaFilter.html" title="class in io.github.term4.echofix">SelfMetaFilter</a></dt>
 <dd>
 <div class="block">Returns whether attribute packet echoes should be suppressed.</div>
@@ -152,21 +138,21 @@ loadScripts(document, 'script');</script>
 during client input processing.</div>
 </dd>
 </dl>
-<h2 class="title" id="I:T">T</h2>
-<dl class="index">
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#the-fix-heading" class="search-tag-link">The Fix</a> - Section in class io.github.term4.echofix.EchoFixPlayer</dt>
-<dd>&nbsp;</dd>
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#the-problem-heading" class="search-tag-link">The Problem</a> - Section in class io.github.term4.echofix.EchoFixPlayer</dt>
-<dd>&nbsp;</dd>
-</dl>
 <h2 class="title" id="I:U">U</h2>
 <dl class="index">
-<dt><a href="io/github/term4/echofix/EchoFixPlayer.html#usage-heading" class="search-tag-link">Usage</a> - Section in class io.github.term4.echofix.EchoFixPlayer</dt>
+<dt><a href="io/github/term4/echofix/EchoFix.html#usage-heading" class="search-tag-link">Usage</a> - Section in class io.github.term4.echofix.EchoFix</dt>
 <dd>&nbsp;</dd>
 <dt><a href="io/github/term4/echofix/SelfMetaFilter.html#usage-heading" class="search-tag-link">Usage</a> - Section in class io.github.term4.echofix.SelfMetaFilter</dt>
 <dd>&nbsp;</dd>
 </dl>
-<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:R">R</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:T">T</a>&nbsp;<a href="#I:U">U</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
+<h2 class="title" id="I:W">W</h2>
+<dl class="index">
+<dt><a href="io/github/term4/echofix/EchoFix.html#wrapListener(java.lang.Class,net.minestom.server.listener.manager.PacketPlayListenerConsumer)" class="member-name-link">wrapListener(Class, PacketPlayListenerConsumer)</a> - Static method in class io.github.term4.echofix.<a href="io/github/term4/echofix/EchoFix.html" title="class in io.github.term4.echofix">EchoFix</a></dt>
+<dd>
+<div class="block">Wrap a custom listener with the echo fix (client input) flag.</div>
+</dd>
+</dl>
+<a href="#I:D">D</a>&nbsp;<a href="#I:E">E</a>&nbsp;<a href="#I:F">F</a>&nbsp;<a href="#I:G">G</a>&nbsp;<a href="#I:I">I</a>&nbsp;<a href="#I:S">S</a>&nbsp;<a href="#I:U">U</a>&nbsp;<a href="#I:W">W</a>&nbsp;<br><a href="allclasses-index.html">All&nbsp;Classes&nbsp;and&nbsp;Interfaces</a><span class="vertical-separator">|</span><a href="allpackages-index.html">All&nbsp;Packages</a></main>
 </div>
 </body>
 </html>

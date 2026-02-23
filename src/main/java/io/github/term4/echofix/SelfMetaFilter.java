@@ -23,16 +23,15 @@ import java.util.Set;
  * <h2>Usage</h2>
  * <pre>{@code
  * // Use the default filter
- * SelfMetadataFilter filter = SelfMetadataFilter.defaultPlayerFilter();
+ * SelfMetaFilter filter = SelfMetaFilter.defaultPlayerFilter();
  *
  * // Or build a custom filter (useful for cross version servers)
- * SelfMetadataFilter filter = new SelfMetadataFilter()
+ * SelfMetaFilter filter = new SelfMetaFilter()
  *         .suppressBit((MetadataDef.Entry.BitMask) MetadataDef.IS_CROUCHING)
  *         .suppressIndex(MetadataDef.POSE);
  * }</pre>
  */
 public final class SelfMetaFilter {
-    private boolean filterElytraStop = false;
 
     /**
      * Creates an empty filter. Use {@link #suppressBit}, {@link #suppressIndex},
@@ -93,24 +92,6 @@ public final class SelfMetaFilter {
     public SelfMetaFilter suppressAttributes(boolean suppress) {
         this.suppressAttributes = suppress;
         return this;
-    }
-
-    /**
-     * When true prevents the server from signalling players to stop flying.
-     *
-     * @param filter When true players will get stuck flying until they relog.
-     * @return
-     */
-    public SelfMetaFilter filterElytraStop(boolean filter) {
-        this.filterElytraStop = filter;
-        return this;
-    }
-
-    /**
-     * Returns whether stop flying with elytra is being filtered.
-     */
-    public boolean filterElytraStop() {
-        return this.filterElytraStop;
     }
 
     /**
@@ -180,6 +161,9 @@ public final class SelfMetaFilter {
      * </ul>
      * <p>
      * Non-predicted bits always pass through (e.g. on fire, glowing)
+     *
+     * Swimming and crawling stutter is also resolved by pose suppression
+     * (index 6) even though the swimming bit (0x10) is not explicitly filtered.
      *
      * @return a new default filter
      */

@@ -1,1 +1,1 @@
-typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html","k":"18"},{"p":"io.github.term4.echofix","l":"EchoFixPlayer"},{"p":"io.github.term4.echofix","l":"ExampleServer"},{"p":"io.github.term4.echofix","l":"SelfMetaFilter"}];updateSearchResults();
+typeSearchIndex = [{"l":"All Classes and Interfaces","u":"allclasses-index.html","k":"18"},{"p":"io.github.term4.echofix","l":"EchoFix"},{"p":"io.github.term4.echofix","l":"EchoFixPlayer"},{"p":"io.github.term4.echofix","l":"SelfMetaFilter"}];updateSearchResults();
