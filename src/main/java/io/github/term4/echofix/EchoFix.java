@@ -48,7 +48,11 @@ public final class EchoFix {
     }
 
     /**
-     * Install with a custom player provider (for subclasses of {@link EchoFixPlayer}).
+     * Install with a custom player provider.
+     * <p>
+     * If the provider does not return an {@link EchoFixPlayer} or subclass,
+     * or if a non-EchoFixPlayer provider is set after install, the fix will
+     * silently stop working.
      *
      * @param provider player provider that returns an {@link EchoFixPlayer} or subclass
      */
