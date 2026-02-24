@@ -59,6 +59,26 @@ public class EchoFixPlayer extends Player {
         this.selfMetaFilter = filter;
     }
 
+
+    /**
+     * Update player state without sending the change to this player.
+     * Other viewers will still receive the updated state.
+     *
+     * <pre>{@code
+     * player.suppressSelf(() -> player.setSneaking(true));
+     * }</pre>
+     *
+     * @param action the state change packet to suppress from self
+     */
+    public void suppressSelf(@NotNull Runnable action) {
+        processingClientInput = true;
+        try {
+            action.run();
+        } finally {
+            processingClientInput = false;
+        }
+    }
+
     @Override
     public void sendPacketToViewersAndSelf(@NotNull SendablePacket packet) {
         if (processingClientInput && selfMetaFilter != null) {

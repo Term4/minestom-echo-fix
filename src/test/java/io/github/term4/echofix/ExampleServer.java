@@ -56,7 +56,7 @@ public class ExampleServer {
         InstanceContainer instanceContainer = instanceManager.createInstanceContainer();
 
         // Generate the world & add lighting
-        instanceContainer.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.WATER));
+        instanceContainer.setGenerator(unit -> unit.modifier().fillHeight(0, 40, Block.GRASS_BLOCK));
         instanceContainer.setChunkSupplier(LightingChunk::new);
 
         // Register self-meta debug commands
@@ -94,6 +94,11 @@ public class ExampleServer {
                             sender.sendMessage("hand → inactive");
                             return TaskSchedule.stop();
                         }, TaskSchedule.tick(40));
+                    }
+                    case "suppress_self" -> {
+                        EchoFixPlayer efp = (EchoFixPlayer) player;
+                        efp.suppressSelf(() -> player.setSneaking(true));
+                        sender.sendMessage("Server side sneaking");
                     }
                     default -> sender.sendMessage("unknown: " + flag.trim()
                             + " (options: sneak, sprint, elytra, hand)");
