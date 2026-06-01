@@ -19,8 +19,8 @@ repositories {
 }
 
 dependencies {
-    compileOnly("net.minestom:minestom:2026.02.19-1.21.11")
-    testImplementation("net.minestom:minestom:2026.02.19-1.21.11")
+    compileOnly("net.minestom:minestom:2026.05.17c-26.1.1")
+    testImplementation("net.minestom:minestom:2026.05.17c-26.1.1")
 }
 
 publishing {
