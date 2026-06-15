@@ -8,8 +8,11 @@ import net.minestom.server.command.builder.arguments.ArgumentType;
 import net.minestom.server.coordinate.Pos;
 import net.minestom.server.entity.GameMode;
 import net.minestom.server.entity.Player;
+import net.minestom.server.entity.PlayerHand;
 import net.minestom.server.event.GlobalEventHandler;
 import net.minestom.server.event.player.AsyncPlayerConfigurationEvent;
+import net.minestom.server.event.player.PlayerBlockInteractEvent;
+import net.minestom.server.event.player.PlayerSpawnEvent;
 import net.minestom.server.instance.InstanceContainer;
 import net.minestom.server.instance.InstanceManager;
 import net.minestom.server.instance.LightingChunk;
@@ -45,8 +48,7 @@ public class ExampleServer {
         System.setProperty("minestom.tps", "20");
 
         // Initialize the server
-        //  bungee auth allows 1.7 clients to join (velocity works for all later versions, and a proxy is not required)
-        MinecraftServer server = MinecraftServer.init(new Auth.Bungee());
+        MinecraftServer server = MinecraftServer.init();
 
         // Enable echo fix
         EchoFix.install();
@@ -108,8 +110,46 @@ public class ExampleServer {
 
         cmdManager.register(selfmeta);
 
-        // Add an event handler to handle player spawning
+        // Crawl test: drops a closed trapdoor in the block at head height (forcing a crawl),
+        // then toggles it open/closed on each subsequent run. Opening it pops you back to
+        // standing — the exact crawl→stand transition the echo fix now handles via updatePose().
+        Command crawl = new Command("crawl");
+        crawl.setDefaultExecutor((sender, context) -> {
+            if (!(sender instanceof Player player)) return;
+
+            final Pos pos = player.getPosition();
+            final int bx = pos.blockX();
+            final int by = pos.blockY() + 1; // block occupying the player's head while standing
+            final int bz = pos.blockZ();
+
+            final Block current = instanceContainer.getBlock(bx, by, bz);
+            if (current.name().endsWith("_trapdoor")) {
+                final boolean open = "true".equals(current.getProperty("open"));
+                instanceContainer.setBlock(bx, by, bz, current.withProperty("open", open ? "false" : "true"));
+                sender.sendMessage("trapdoor → " + (open ? "closed (crawl)" : "open (stand)"));
+            } else {
+                instanceContainer.setBlock(bx, by, bz, Block.OAK_TRAPDOOR
+                        .withProperty("half", "bottom")
+                        .withProperty("open", "false"));
+                sender.sendMessage("placed a closed trapdoor overhead → crawl. Run /crawl again to open it.");
+            }
+        });
+        cmdManager.register(crawl);
+
+        // Toggle any trapdoor open/closed on right-click (Minestom has no vanilla interaction
+        // logic). Hold a non-block item (or empty hand) to avoid placing instead of toggling.
         GlobalEventHandler globalEventHandler = MinecraftServer.getGlobalEventHandler();
+        globalEventHandler.addListener(PlayerBlockInteractEvent.class, event -> {
+            if (event.getHand() != PlayerHand.MAIN) return;
+            final Block block = event.getBlock();
+            if (!block.name().endsWith("_trapdoor")) return;
+
+            final boolean open = "true".equals(block.getProperty("open"));
+            event.getInstance().setBlock(event.getBlockPosition(), block.withProperty("open", open ? "false" : "true"));
+            event.setBlockingItemUse(true); // don't also place a new trapdoor on top
+        });
+
+        // Add an event handler to handle player spawning
         globalEventHandler.addListener(AsyncPlayerConfigurationEvent.class, event -> {
             final Player player = event.getPlayer();
             event.setSpawningInstance(instanceContainer);
@@ -118,10 +158,20 @@ public class ExampleServer {
             player.setGameMode(GameMode.CREATIVE);
 
             player.getInventory().addItemStack(ItemStack.of(Material.SHIELD));
+            player.getInventory().addItemStack(ItemStack.of(Material.OAK_TRAPDOOR, 64));
             player.setChestplate(ItemStack.of(Material.ELYTRA));
         });
 
+        // Print test instructions once the player is in-game
+        globalEventHandler.addListener(PlayerSpawnEvent.class, event -> {
+            if (!event.isFirstSpawn()) return;
+            event.getPlayer().sendMessage("Echo fix test server.");
+            event.getPlayer().sendMessage("Crawl test: stand still and run /crawl to drop a trapdoor overhead "
+                    + "(forces a crawl), then /crawl again to open it and pop back to standing.");
+            event.getPlayer().sendMessage("Or place trapdoors yourself and right-click them to open/close.");
+        });
+
         // Start the server
-        server.start("0.0.0.0", 25566);
+        server.start("0.0.0.0", 25567);
     }
 }

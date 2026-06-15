@@ -21,6 +21,7 @@ This echo affects:
 | **Item use** (shield, bow, eating) | Animation replays on rapid clicks                  |
 | **Elytra launch** | Flight animation stutter / stale animation replays |
 | **Sprint start/stop** | Movement speed attribute re-applied                |
+| **Crawling** (entering/leaving a 1-block gap) | Pose pops as you squeeze under or out from a trapdoor |
 
 Most players experience this as normal lag, but it's a fixable bug (that's been seen
 in the game for over a decade)
@@ -110,6 +111,19 @@ Client                    Server                    Client (self)       Other Vi
 Because the flag is only set during client packet processing,
 server-driven calls (plugins, commands, schedulers, Minestom internals)
 always pass through unfiltered. No special handling needed.
+
+### Pose recalculation (crawling)
+
+Not every client-predicted change arrives as a packet. The player's pose is
+recomputed **every server tick** in `Player.updatePose()`, based on whether the
+player still fits in their current space. Squeezing under a closing trapdoor
+(STANDING → SWIMMING/crawl) or popping out when it opens (crawl → STANDING)
+happens here, not in a client input listener — yet the client still predicts it
+locally, so the self-bound echo stutters just like the others.
+
+`EchoFixPlayer` overrides `updatePose()` to set the same `processingClientInput`
+flag around the recalculation, so the pose index is stripped from the self packet
+while viewers still get the full pose. No client packet is involved.
 
 ## Custom Filters
 

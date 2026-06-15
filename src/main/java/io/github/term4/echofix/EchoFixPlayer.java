@@ -79,6 +79,19 @@ public class EchoFixPlayer extends Player {
         }
     }
 
+    // Pose is recalculated each tick (crawl<->stand under trapdoors), outside the client-input
+    // window, so arm the flag here too and let the filter strip the self echo.
+    @Override
+    protected void updatePose() {
+        boolean previous = processingClientInput;
+        processingClientInput = true;
+        try {
+            super.updatePose();
+        } finally {
+            processingClientInput = previous;
+        }
+    }
+
     @Override
     public void sendPacketToViewersAndSelf(@NotNull SendablePacket packet) {
         if (processingClientInput && selfMetaFilter != null) {
